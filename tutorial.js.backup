@@ -1,0 +1,380 @@
+// ========================================
+// SISTEMA DE TUTORIAL INTERATIVO
+// ========================================
+
+const tutorialSteps = [
+    {
+        id: 'welcome',
+        title: 'Bem-vindo à Aventura de GUI! 🎉',
+        message: 'Olá! Eu sou o Papai CIRO e vou te ensinar a construir academias incríveis! Vamos começar?',
+        target: null,
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'resources',
+        title: 'Recursos da Obra 📦',
+        message: 'Aqui você vê seus recursos: Tijolos 🧱, Ferramentas 🔨, Equipamentos 💪 e Dinheiro 💰. Você vai precisar deles para construir!',
+        target: '.resources-panel',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'work_button',
+        title: 'Trabalhar na Obra 🔨',
+        message: 'Clique neste botão para coletar recursos! Cada clique te dá tijolos, ferramentas ou equipamentos. Vamos lá, clique 30 vezes para ter recursos suficientes!',
+        target: '#work-btn',
+        action: 'click_work',
+        requiredClicks: 30,
+        highlight: true
+    },
+    {
+        id: 'combo_system',
+        title: 'Sistema de Combo 🔥',
+        message: 'Ótimo! Se você clicar rapidamente, ativa o COMBO e ganha MAIS recursos! Quanto mais rápido, maior o multiplicador!',
+        target: '#work-btn',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'areas',
+        title: 'Áreas para Construir 🏗️',
+        message: 'Aqui estão as áreas da academia que você pode construir. Cada uma precisa de recursos diferentes e te dá dinheiro como recompensa!',
+        target: '.right-panel',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'build_first',
+        title: 'Primeira Construção 🏢',
+        message: 'Agora você tem recursos suficientes! Vamos construir a RECEPÇÃO. Clique no botão "Construir" da Recepção!',
+        target: '[data-area="reception"]',
+        action: 'build_reception',
+        highlight: true,
+        waitForResources: true
+    },
+    {
+        id: 'money_gained',
+        title: 'Dinheiro Ganho! 💰',
+        message: 'Parabéns! Você construiu sua primeira área e ganhou dinheiro! Use o dinheiro para comprar MELHORIAS que facilitam o jogo!',
+        target: '#money',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'upgrades',
+        title: 'Melhorias ⚡',
+        message: 'Aqui você pode comprar melhorias com dinheiro. Elas aumentam sua coleta de recursos ou fazem coleta automática!',
+        target: '.upgrades-panel',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'decisions',
+        title: 'Decisões Estratégicas 🎲',
+        message: 'Durante o jogo, você terá que tomar DECISÕES importantes! Escolha bem, pois decisões erradas podem te fazer perder o jogo!',
+        target: null,
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'events',
+        title: 'Mini-Eventos 🎁',
+        message: 'Fique atento! Eventos aleatórios podem acontecer e te dar bônus ou desafios. Eles aparecem de surpresa!',
+        target: null,
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'goal',
+        title: 'Objetivo do Jogo 🎯',
+        message: 'Seu objetivo é construir TODAS as 4 áreas da academia! Complete 3 academias para ZERAR o jogo e ganhar o Prêmio ConstruBusiness!',
+        target: '.construction-area',
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'warning',
+        title: 'Atenção! ⚠️',
+        message: 'CUIDADO: Se o dinheiro ZERAR (R$ 0), você perde o jogo! E se errar 2 decisões, também é Game Over! Gerencie bem seus recursos!',
+        target: null,
+        action: null,
+        nextButton: true
+    },
+    {
+        id: 'finish',
+        title: 'Pronto para Começar! 🚀',
+        message: 'Agora você sabe tudo! Boa sorte na construção das academias, GUI! Vamos fazer um trabalho incrível juntos! 💪',
+        target: null,
+        action: null,
+        nextButton: true,
+        isLast: true
+    }
+];
+
+let tutorialState = {
+    active: false,
+    currentStep: 0,
+    clickCount: 0,
+    completed: false
+};
+
+// ========================================
+// FUNÇÕES DO TUTORIAL
+// ========================================
+
+function startTutorial() {
+    // Verificar se já completou o tutorial
+    const tutorialCompleted = localStorage.getItem('aventuraGUI_tutorialCompleted');
+    if (tutorialCompleted === 'true') {
+        return;
+    }
+    
+    tutorialState.active = true;
+    tutorialState.currentStep = 0;
+    tutorialState.clickCount = 0;
+    
+    showTutorialStep(0);function showTutorialStep(stepIndex) {
+    const step = tutorialSteps[stepIndex];
+    
+    // Se o passo requer construir recepção, verificar a cada segundo
+    if (step.action === 'build_reception') {
+        const checkInterval = setInterval(() => {
+            if (gameState.areasBuilt.includes('reception')) {
+                clearInterval(checkInterval);
+                setTimeout(() => nextTutorialStep(), 1000);
+            }
+        }, 500);
+        
+        // Guardar o intervalo para limpar depois
+        tutorialState.checkInterval = checkInterval;
+    }gth) {
+        completeTutorial();
+        return;
+    }
+    
+    const step = tutorialSteps[stepIndex];
+    tutorialState.currentStep = stepIndex;
+    
+    // Criar/atualizar overlay
+    createTutorialOverlay(step);
+    
+    // Destacar elemento alvo
+    if (step.target) {
+        highlightElement(step.target);
+    }
+    
+    // Mostrar seta apontando
+    if (step.target && step.highlight) {
+        showArrow(step.target);
+    }
+}
+
+function createTutorialOverlay(step) {
+    // Remover overlay anterior
+    removeTutorialOverlay();
+    
+    // Criar overlay escuro
+    const overlay = document.createElement('div');
+    overlay.id = 'tutorial-overlay';
+    overlay.className = 'tutorial-overlay';
+    document.body.appendChild(overlay);
+    
+    // Criar caixa de diálogo
+    const dialog = document.createElement('div');
+    dialog.id = 'tutorial-dialog';
+    dialog.className = 'tutorial-dialog';
+    
+    const clickCounter = step.action === 'click_work' ? `<p class="tutorial-hint" id="tutorial-click-counter">Cliques: 0/${step.requiredClicks}</p>` : '';
+    const actionHint = step.action && step.action !== 'click_work' ? '<p class="tutorial-hint">Complete a ação para continuar!</p>' : '';
+    
+    dialog.innerHTML = `
+        <div class="tutorial-header">
+            <img src="ciro_character.png" alt="CIRO" class="tutorial-ciro">
+            <div class="tutorial-progress">Passo ${tutorialState.currentStep + 1} de ${tutorialSteps.length}</div>
+        </div>
+        <h3 class="tutorial-title">${step.title}</h3>
+        <p class="tutorial-message">${step.message}</p>
+        <div class="tutorial-actions">
+            ${step.nextButton ? '<button class="btn-primary tutorial-next" onclick="nextTutorialStep()">Próximo →</button>' : ''}
+            ${clickCounter}
+            ${actionHint}
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
+    
+    // Animação de entrada
+    setTimeout(() => {
+        dialog.classList.add('tutorial-show');
+    }, 100);
+}
+
+function highlightElement(selector) {
+    // Remover highlight anterior
+    document.querySelectorAll('.tutorial-highlight').forEach(el => {
+        el.classList.remove('tutorial-highlight');
+    });
+    
+    // Adicionar highlight ao elemento
+    const element = document.querySelector(selector);
+    if (element) {
+        element.classList.add('tutorial-highlight');
+        element.style.position = 'relative';
+        element.style.zIndex = '10001';
+    }
+}
+
+function showArrow(selector) {
+    // Remover seta anterior
+    const oldArrow = document.getElementById('tutorial-arrow');
+    if (oldArrow) {
+        oldArrow.remove();
+    }
+    
+    const element = document.querySelector(selector);
+    if (!element) return;
+    
+    const rect = element.getBoundingClientRect();
+    
+    const arrow = document.createElement('div');
+    arrow.id = 'tutorial-arrow';
+    arrow.className = 'tutorial-arrow';
+    arrow.innerHTML = '👇';
+    
+    // Posicionar seta acima do elemento
+    arrow.style.position = 'fixed';
+    arrow.style.left = (rect.left + rect.width / 2 - 20) + 'px';
+    arrow.style.top = (rect.top - 60) + 'px';
+    arrow.style.zIndex = '10002';
+    
+    document.body.appendChild(arrow);
+}
+
+function removeTutorialOverlay() {
+    const overlay = document.getElementById('tutorial-overlay');
+    if (overlay) overlay.remove();
+    
+    const dialog = document.getElementById('tutorial-dialog');
+    if (dialog) dialog.remove();
+    
+    const arrow = document.getElementById('tutorial-arrow');
+    if (arrow) arrow.remove();
+    
+    // Remover highlights
+    document.querySelectorAll('.tutorial-highlight').forEach(el => {
+        el.classList.remove('tutorial-highlight');
+        el.style.zIndex = '';
+    });
+}
+
+function nextTutorialStep() {
+    const currentStep = tutorialSteps[tutorialState.currentStep];
+    
+    // Verificar se precisa esperar recursos
+    if (currentStep.waitForResources) {
+        const hasResources = gameState.bricks >= 20 && gameState.tools >= 10;
+        if (!hasResources) {
+            showTutorialHint('Você ainda não tem recursos suficientes! Continue clicando em "Trabalhar na Obra".');
+            return;
+        }
+    }
+    
+    showTutorialStep(tutorialState.currentStep + 1);
+}
+
+function showTutorialHint(message) {
+    const hint = document.createElement('div');
+    hint.className = 'tutorial-hint-popup';
+    hint.textContent = message;
+    document.body.appendChild(hint);
+    
+    setTimeout(() => {
+        hint.remove();
+    }, 3000);
+}
+
+function checkTutorialAction(action) {
+    if (!tutorialState.active) return;
+    
+    const currentStep = tutorialSteps[tutorialState.currentStep];
+    if (!currentStep.action) return;
+    
+    if (currentStep.action === 'click_work') {
+        if (!tutorialState.clickCount) tutorialState.clickCount = 0;
+        tutorialState.clickCount++;
+        
+        console.log('Tutorial click count:', tutorialState.clickCount);
+        
+        // Atualizar contador na tela
+        const counter = document.getElementById('tutorial-click-counter');
+        if (counter) {
+            counter.textContent = `Cliques: ${tutorialState.clickCount}/${currentStep.requiredClicks}`;
+            counter.style.color = tutorialState.clickCount >= currentStep.requiredClicks ? '#27ae60' : '#f39c12';
+            counter.style.fontWeight = 'bold';
+            counter.style.fontSize = '1.2rem';
+        }
+        
+        if (tutorialState.clickCount >= currentStep.requiredClicks) {
+            console.log('Avançando tutorial...');
+            tutorialState.clickCount = 0;
+            setTimeout(() => nextTutorialStep(), 800);
+        }
+    }
+    
+    if (currentStep.action === 'build_reception' && action === 'build_reception') {
+        setTimeout(() => nextTutorialStep(), 1000);
+    }
+}
+
+function completeTutorial() {
+    tutorialState.active = false;
+    tutorialState.completed = true;
+    
+    removeTutorialOverlay();
+    
+    // Salvar que completou o tutorial
+    localStorage.setItem('aventuraGUI_tutorialCompleted', 'true');
+    
+    // Mostrar mensagem de conclusão
+    showCiroMessage('🎓 Tutorial completo! Agora você está pronto para construir academias incríveis! Boa sorte!');
+}
+
+function skipTutorial() {
+    if (confirm('Tem certeza que deseja pular o tutorial?')) {
+        completeTutorial();
+    }
+}
+
+function resetTutorial() {
+    localStorage.removeItem('aventuraGUI_tutorialCompleted');
+    tutorialState.active = false;
+    tutorialState.currentStep = 0;
+    tutorialState.clickCount = 0;
+    tutorialState.completed = false;
+}
+
+// ========================================
+// INTEGRAÇÃO COM O JOGO
+// ========================================
+
+// Verificar ações do tutorial
+function checkTutorialWorkClick() {
+    checkTutorialAction('click_work');
+}
+
+function checkTutorialBuild(areaId) {
+    if (areaId === 'reception') {
+        checkTutorialAction('build_reception');
+    }
+}
+
+// Exportar funções
+window.startTutorial = startTutorial;
+window.nextTutorialStep = nextTutorialStep;
+window.skipTutorial = skipTutorial;
+window.resetTutorial = resetTutorial;
+window.checkTutorialWorkClick = checkTutorialWorkClick;
+window.checkTutorialBuild = checkTutorialBuild;
+window.tutorialState = tutorialState;
+

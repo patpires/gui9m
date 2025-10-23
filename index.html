@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura de GUI - Construindo Academias com Papai CIRO</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="improvements.css">
+    <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="tutorial.css">
+</head>
+<body>
+    <!-- Tela de Início -->
+    <div id="start-screen" class="screen active">
+        <div class="start-container">
+            <h1 class="game-title">🏗️ Aventura de GUI 🏗️</h1>
+            <h2 class="subtitle">Construindo Academias com Papai CIRO</h2>
+            <img src="gui_character.png" alt="GUI" class="character-intro">
+            <div class="celebration-banner">
+                <p class="celebration-text">🎉 Parabéns GUI pelos 9 meses! 🎉</p>
+            </div>
+            <p class="intro-text">
+                Ajude o pequeno GUI a construir academias incríveis junto com o Papai CIRO!<br>
+                Colete recursos, tome decisões estratégicas e construa a melhor academia!
+            </p>
+            <button class="btn-primary" onclick="startGame()">Começar Aventura!</button>
+            <button class="btn-secondary" onclick="showInstructions()">Como Jogar</button>
+            <button class="btn-secondary" onclick="showRecords()">Recordes</button>
+            <button class="btn-secondary" onclick="resetTutorial(); alert('Tutorial resetado! Ele aparecerá novamente ao iniciar o jogo.');">Refazer Tutorial</button>
+            <button class="btn-secondary" onclick="clearSaveAndStart()" style="font-size: 0.9rem;">Novo Jogo (Apagar Progresso)</button>
+        </div>
+    </div>
+
+    <!-- Tela de Instruções -->
+    <div id="instructions-screen" class="screen">
+        <div class="instructions-container">
+            <h2>📋 Como Jogar</h2>
+            <div class="instructions-content">
+                <div class="instruction-item">
+                    <h3>🎯 Objetivo</h3>
+                    <p>Construir academias completas coletando recursos e fazendo escolhas estratégicas!</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>🔨 Coletar Recursos</h3>
+                    <p>Clique no botão "Trabalhar na Obra" para coletar tijolos, ferramentas e equipamentos.</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>🏗️ Construir Áreas</h3>
+                    <p>Use seus recursos para construir diferentes áreas da academia: Recepção, Musculação, Cardio e Vestiários.</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>⚡ Melhorias</h3>
+                    <p>Compre melhorias para coletar recursos mais rapidamente e desbloquear novos equipamentos!</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>🎲 Decisões Estratégicas</h3>
+                    <p>Durante o jogo, você terá que tomar decisões importantes que afetarão seu progresso!</p>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="hideInstructions()">Entendi!</button>
+        </div>
+    </div>
+
+    <!-- Tela Principal do Jogo -->
+    <div id="game-screen" class="screen">
+        <!-- Cabeçalho -->
+        <header class="game-header">
+            <div class="header-left">
+                <h1>🏗️ Aventura de GUI</h1>
+                <p class="level-info">Academia #<span id="current-level">1</span></p>
+            </div>
+            <div class="header-right">
+                <button class="btn-help" onclick="showInstructions()">❓</button>
+                <button class="btn-reset" onclick="resetGame()">🔄</button>
+            </div>
+        </header>
+
+        <!-- Área de Recursos -->
+        <div class="resources-panel">
+            <div class="resource-item">
+                <span class="resource-icon">🧱</span>
+                <span class="resource-name">Tijolos:</span>
+                <span class="resource-value" id="bricks">0</span>
+            </div>
+            <div class="resource-item">
+                <span class="resource-icon">🔨</span>
+                <span class="resource-name">Ferramentas:</span>
+                <span class="resource-value" id="tools">0</span>
+            </div>
+            <div class="resource-item">
+                <span class="resource-icon">💪</span>
+                <span class="resource-name">Equipamentos:</span>
+                <span class="resource-value" id="equipment">0</span>
+            </div>
+            <div class="resource-item">
+                <span class="resource-icon">💰</span>
+                <span class="resource-name">Dinheiro:</span>
+                <span class="resource-value" id="money">0</span>
+            </div>
+        </div>
+
+        <!-- Área Principal -->
+        <div class="main-game-area">
+            <!-- Painel Esquerdo - Personagens e Ações -->
+            <div class="left-panel">
+                <div class="character-panel">
+                    <img src="gui_character.png" alt="GUI" class="character-game">
+                    <img src="ciro_character.png" alt="CIRO" class="character-game">
+                </div>
+                
+                <div class="action-panel">
+                    <h3>⚒️ Ações</h3>
+                    <button class="btn-action" id="work-btn" onclick="work()">
+                        🔨 Trabalhar na Obra
+                        <span class="btn-info">+<span id="work-rate">1</span> recursos</span>
+                    </button>
+                    <div class="work-progress">
+                        <div class="progress-bar" id="work-progress"></div>
+                    </div>
+                </div>
+
+                <div class="upgrades-panel">
+                    <h3>⚡ Melhorias</h3>
+                    <div id="upgrades-list"></div>
+                </div>
+            </div>
+
+            <!-- Painel Central - Construção -->
+            <div class="center-panel">
+                <div class="construction-area">
+                    <h3>🏗️ Construção da Academia</h3>
+                    <div class="gym-visual" id="gym-visual">
+                        <div class="construction-message">
+                            <p>Comece a construir as áreas da academia!</p>
+                        </div>
+                    </div>
+                    <div class="construction-progress">
+                        <p>Progresso Total: <span id="total-progress">0</span>%</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="total-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel Direito - Áreas para Construir -->
+            <div class="right-panel">
+                <h3>🏛️ Áreas da Academia</h3>
+                <div id="areas-list"></div>
+            </div>
+        </div>
+
+        <!-- Painel de Mensagens do CIRO -->
+        <div class="message-panel" id="message-panel">
+            <div class="message-content">
+                <img src="ciro_character.png" alt="CIRO" class="message-avatar">
+                <div class="message-text">
+                    <strong>Papai CIRO:</strong>
+                    <p id="ciro-message">Olá GUI! Vamos construir uma academia incrível juntos!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Decisões -->
+    <div id="decision-modal" class="modal">
+        <div class="modal-content">
+            <h2>🎲 Decisão Estratégica</h2>
+            <p id="decision-question"></p>
+            <div id="decision-options"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Nível Completo -->
+    <div id="level-complete-modal" class="modal">
+        <div class="modal-content victory-content">
+            <div id="level-message"></div>
+            <img src="gui_character.png" alt="GUI" class="victory-character">
+            <div class="victory-stats" id="level-stats"></div>
+            <button class="btn-primary" id="btn-next-level" onclick="nextLevel()">Próxima Academia</button>
+            <button class="btn-secondary" id="btn-celebrate" onclick="restartGame()">Recomeçar do Zero</button>
+        </div>
+    </div>
+    
+    <!-- Modal de Game Over -->
+    <div id="gameover-modal" class="modal">
+        <div class="modal-content gameover-content">
+            <h2>😢 Game Over</h2>
+            <p id="gameover-message"></p>
+            <div class="victory-stats" id="gameover-stats"></div>
+            <button class="btn-primary" onclick="restartGame()">Tentar Novamente</button>
+        </div>
+    </div>
+    
+    <!-- Modal de Recordes -->
+    <div id="records-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 Seus Recordes</h2>
+            <div id="records-list"></div>
+            <div style="margin-top: 1.5rem;">
+                <button class="btn-secondary" onclick="hideRecords()">Fechar</button>
+                <button class="btn-secondary" onclick="clearRecords()" style="background: #ff6b6b;">Limpar Recordes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="gameover.js"></script>
+    <script src="notifications.js"></script>
+    <script src="records.js"></script>
+    <script src="enhancements.js"></script>
+    <script src="tutorial_simple.js"></script>
+</body>
+</html>
+

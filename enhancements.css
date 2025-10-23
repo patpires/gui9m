@@ -1,0 +1,227 @@
+/* ========================================
+   SISTEMA DE COMBO
+   ======================================== */
+
+.combo-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    padding: 0.75rem 1.25rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+}
+
+.combo-pulse {
+    animation: comboPulse 0.3s ease-in-out;
+}
+
+@keyframes comboPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ========================================
+   NÚMEROS FLUTUANTES
+   ======================================== */
+
+.floating-number {
+    position: fixed;
+    font-size: 1.5rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 9998;
+    animation: floatUp 2s ease-out forwards;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+
+/* ========================================
+   CONFETES
+   ======================================== */
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 9997;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ========================================
+   SHAKE SCREEN
+   ======================================== */
+
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+/* ========================================
+   PULSE ANIMATION
+   ======================================== */
+
+.pulse-animation {
+    animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ========================================
+   MODAL DE EVENTOS
+   ======================================== */
+
+.event-modal-content {
+    text-align: center;
+    padding: 2rem;
+    max-width: 500px;
+}
+
+.event-modal-content .event-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.event-modal-content .event-message {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.event-modal-content .event-result {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #27ae60;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #d4edda;
+    border-radius: 10px;
+}
+
+.event-appear {
+    animation: eventAppear 0.5s ease-out;
+}
+
+@keyframes eventAppear {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   EFEITOS NO BOTÃO DE TRABALHAR
+   ======================================== */
+
+.btn-action:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+.btn-action:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+}
+
+/* ========================================
+   GLOW EFFECT PARA RECURSOS
+   ======================================== */
+
+.resource-glow {
+    animation: resourceGlow 0.5s ease-in-out;
+}
+
+@keyframes resourceGlow {
+    0%, 100% { box-shadow: none; }
+    50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8); }
+}
+
+/* ========================================
+   ANIMAÇÃO DE CONSTRUÇÃO
+   ======================================== */
+
+.building-animation {
+    animation: building 1s ease-in-out;
+}
+
+@keyframes building {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-10px); }
+    50% { transform: translateY(-5px); }
+    75% { transform: translateY(-10px); }
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+@media (max-width: 768px) {
+    .combo-indicator {
+        font-size: 2rem;
+    }
+    
+    .floating-number {
+        font-size: 1.2rem;
+    }
+    
+    .event-modal-content {
+        padding: 1.5rem;
+        max-width: 90%;
+    }
+    
+    .event-modal-content .event-title {
+        font-size: 1.5rem;
+    }
+    
+    .event-modal-content .event-message {
+        font-size: 1rem;
+    }
+    
+    .event-modal-content .event-result {
+        font-size: 1.1rem;
+    }
+}
+
